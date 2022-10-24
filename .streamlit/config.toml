@@ -2,4 +2,6 @@
 dataFrameSerialization = "legacy"
 [theme]
 base="light"
+[server]
+port = 80
 
