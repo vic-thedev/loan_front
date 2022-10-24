@@ -64,8 +64,6 @@ nc_df
 st.write("Vous avez indiqué que le demandeur est âgé de ", age, 'ans')
 
 if st.button("Évaluer"):
-    '''nc_df = pd.DataFrame(actual)
-    nc_df'''
     newclient = {"vector": list(nc_df.values)}
 
     evaluation = requests.get(
