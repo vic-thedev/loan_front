@@ -4,7 +4,6 @@ import pandas as pd
 import requests
 import matplotlib.pyplot as plt
 import numpy as np
-from bokeh.plotting import figure
 st. set_page_config(layout="wide")
 backend_url = "https://loan.cleverapps.io/"
 
