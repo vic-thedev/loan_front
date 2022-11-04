@@ -71,7 +71,7 @@ for el in last_clients:
 the_disp = pd.concat([granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']],
                       granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[
     nb_var]  # Ajout de la ligne moyenne au dataframe
-luc = st.area_chart(the_disp[nb_var].T,x=nb_var)
+luc = st.bar_chart(the_disp[nb_var].T,x=nb_var)
 st.write('Modifier le nombre de variables:')
 a,b,c,d = st.columns(4)
 if a.button('25'):
