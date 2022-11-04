@@ -79,28 +79,28 @@ if a.button('25'):
     nb_var = most_imp
     s1 = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]
     the_disp = pd.concat([s1, granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[nb_var]
-    luc.area_chart(the_disp[nb_var].T, x=nb_var)
+    luc.bar_chart(the_disp[nb_var].T, x=nb_var)
 
 if b.button('12'):
     st.write(st.session_state['temp_cli'])
     nb_var = sel_twelve
     s1 = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]
     the_disp = pd.concat([s1,granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[nb_var]
-    luc.area_chart(the_disp[nb_var].T, x=nb_var)
+    luc.bar_chart(the_disp[nb_var].T, x=nb_var)
 
 if c.button('6'):
     st.write(st.session_state['temp_cli'])
     nb_var = sel_six
     s1 = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]
     the_disp = pd.concat([s1, granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[nb_var]
-    luc.area_chart(the_disp[nb_var].T, x=nb_var)
+    luc.bar_chart(the_disp[nb_var].T, x=nb_var)
 
 if d.button('3'):
     st.write(st.session_state['temp_cli'])
     nb_var = sel_three
     s1 = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]
     the_disp = pd.concat([s1, granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[nb_var]
-    luc.area_chart(the_disp[nb_var].T, x=nb_var)
+    luc.bar_chart(the_disp[nb_var].T, x=nb_var)
 
 st.write(f'''Entrez l'id souhaité''')
 
