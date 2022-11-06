@@ -103,7 +103,7 @@ for el in last_clients:
 
 placeholder = st.empty()
 st.session_state['hand_temp_cli'] = st.text_input('Vous pouvez aussi entrer un id client manuellement :')
-st.write(" exemple de client: 935f0753-920d-4977-b021-17d00a140   ou   6cc62c73-dae7-43c7-84fe-c5437")
+st.write(" exemple de client: '935f0753-920d-4977-b021-17d00a140'  - ou  - '6cc62c73-dae7-43c7-84fe-c5437'")
 if st.session_state['hand_temp_cli'] != "":
     st.session_state['temp_cli'] = st.session_state['hand_temp_cli']
 
@@ -115,7 +115,7 @@ for el in last_clients:
         st.session_state['temp_cli'] = el
 
 
-st.write(f"Vous consulter client n° {st.session_state.temp_cli}")
+st.write(f"Vous consultez le client n° {st.session_state.temp_cli}")
 
 
 the_disp = pd.concat([granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']],
