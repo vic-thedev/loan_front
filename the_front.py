@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import matplotlib.pyplot as plt
 import numpy as np
+import plost
 st. set_page_config(layout="wide")
 backend_url = "https://loan.cleverapps.io/"
 
@@ -137,10 +138,8 @@ the_disp = pd.concat([granted_pop_clients.loc[granted_pop_clients['uuid'] == st.
 grouped = the_disp[[trans[o] for o in sel_three]].T
 grouped['features'] = grouped.index
 grouped.rename(columns={grouped.columns[0]:'Le client'}, inplace=True)
-plost.bar_chart(data=grouped,
-                    bar='features', height=400, width=300,
-                    value=[grouped.columns[0],'mean'],
-                    group=True)
+
+plost.bar_chart(data=grouped,bar='features', height=400, width=300,value=[grouped.columns[0],'mean'],group=True)
 
 stacked = the_disp[nb_var].T
 stacked.rename(columns={stacked.columns[0]:"Le client"}, inplace=True)
