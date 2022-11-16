@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import matplotlib.pyplot as plt
 import numpy as np
+import plost
 st. set_page_config(layout="wide")
 backend_url = "https://loan.cleverapps.io/"
 
@@ -89,12 +90,12 @@ st.write(f'''
  # OC credit 
  ''')
 if 'temp_cli' not in st.session_state:
-    st.session_state['temp_cli'] = 'f1f775dc-283a-4960-a40d-977d1b6237f7'
-
+    st.session_state['temp_cli'] = 'f08dc1a2-a753-4b62-b52d-5d63fe5db282'
+    st.session_state['ps'] = [38.15]
 if 'hand_temp_cli' not in st.session_state:
     st.session_state['hand_temp_cli'] = ''
 
-last_clients = ['f1f775dc-283a-4960-a40d-977d1b6237f7','c72522e1-00af-4903-824a-027a2e9fbfda','bd2b7917-a04f-4f81-a5fa-405306c9663d','26107121-8da6-454f-953e-dbad0f309dbf','f426a68f-c66a-4202-bdc7-ec6d93a9afd5']
+last_clients = ['b4d44a58-045b-4dd9-9bda-7a7b6e29533d','86c2e78d-e68f-4d83-960b-b3a95f145b48','2380d868-5f66-490b-a4e9-9cf66f9a6c2b','55087e48-249b-4a82-a695-1963e98342e6','f08dc1a2-a753-4b62-b52d-5d63fe5db282']
 
 st.write(f'''## Consultez les fiches de vos derniers clients:''')
 for el in last_clients:
@@ -103,27 +104,49 @@ for el in last_clients:
 
 placeholder = st.empty()
 st.session_state['hand_temp_cli'] = st.text_input('Vous pouvez aussi entrer un id client manuellement :')
-st.write(" exemple de client: '935f0753-920d-4977-b021-17d00a140'  - ou  - '6cc62c73-dae7-43c7-84fe-c5437'")
+st.write(" exemple de client: 'a2f9d59f-fd28-472f-95a2-e89a926bd73f'  - ou  - 'a1c761bf-e5e9-440f-9de5-049e2d95ef5e'")
 if st.session_state['hand_temp_cli'] != "":
     st.session_state['temp_cli'] = st.session_state['hand_temp_cli']
-
+    st.session_state['ps'] = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]['prediction_score'].values *100
 
 
 for el in last_clients:
     if st.session_state.get(el):
         st.session_state['hand_temp_cli'] = el
         st.session_state['temp_cli'] = el
+        st.session_state['ps'] = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]['prediction_score'].values * 100
+
+st.markdown(f'''## Prénom et nom du client : {granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]['names'].values}''')
+st.write(f"Identifiant unique : {st.session_state.temp_cli}")
 
 
-st.write(f"Vous consultez le client n° {st.session_state.temp_cli}")
+def score_color(score_number):
+    if score_number >= 50:
+        return 'red'
+    elif score_number >=35 and score_number <50:
+        return 'orange'
+    elif score_number <35:
+        return 'green'
 
 
+st.markdown(f"<h1 style='color:{score_color(st.session_state['ps'][0])}'>{st.session_state['ps'][0]}</h1>.",unsafe_allow_html=True)
 the_disp = pd.concat([granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']],
                       granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[
     nb_var]  # Ajout de la ligne moyenne au dataframe
 #Columns traduction
 
-luc = st.bar_chart(the_disp[nb_var].T,x=nb_var)
+
+grouped = the_disp[[trans[o] for o in sel_three]].T
+grouped['features'] = grouped.index
+grouped.rename(columns={grouped.columns[0]:'Le client'}, inplace=True)
+plost.bar_chart(data=grouped,
+                    bar='features', height=400, width=300,
+                    value=[grouped.columns[0],'mean'],
+                    group=True)
+
+stacked = the_disp[nb_var].T
+stacked.rename(columns={stacked.columns[0]:"Le client"}, inplace=True)
+luc = st.bar_chart(stacked,x=nb_var)
 st.write('Filtrer le nombre de variables:')
 a,b,c,d = st.columns(4)
 if a.button('25'):
@@ -132,7 +155,9 @@ if a.button('25'):
     nb_var = [trans[i] if i in trans.keys() else i for i in most_imp]
     s1 = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]
     the_disp = pd.concat([s1, granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[nb_var]
-    luc.bar_chart(the_disp[nb_var].T, x=nb_var)
+    stacked = the_disp[nb_var].T
+    stacked.rename(columns={stacked.columns[0]: "Le client"}, inplace=True)
+    luc.bar_chart(stacked, x=nb_var)
 
 if b.button('12'):
     st.session_state['hand_temp_cli'] = el
@@ -140,7 +165,9 @@ if b.button('12'):
     nb_var = [trans[i] if i in trans.keys() else i for i in sel_twelve]
     s1 = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]
     the_disp = pd.concat([s1,granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[nb_var]
-    luc.bar_chart(the_disp[nb_var].T, x=nb_var)
+    stacked = the_disp[nb_var].T
+    stacked.rename(columns={stacked.columns[0]: "Le client"}, inplace=True)
+    luc.bar_chart(stacked, x=nb_var)
 
 if c.button('6'):
     st.session_state['hand_temp_cli'] = el
@@ -148,20 +175,13 @@ if c.button('6'):
     nb_var = [trans[i] if i in trans.keys() else i for i in sel_six]
     s1 = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]
     the_disp = pd.concat([s1, granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[nb_var]
-    luc.bar_chart(the_disp[nb_var].T, x=nb_var)
+    stacked = the_disp[nb_var].T
+    stacked.rename(columns={stacked.columns[0]: "Le client"}, inplace=True)
+    luc.bar_chart(stacked, x=nb_var)
 
-if d.button('3'):
-    st.session_state['temp_cli'] = el
-    st.session_state['hand_temp_cli'] = st.session_state['temp_cli']
-    st.write(st.session_state['temp_cli'])
-    nb_var = [trans[i] if i in trans.keys() else i for i in sel_three]
-    s1 = granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']]
-    the_disp = pd.concat([s1, granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[nb_var]
-    luc.bar_chart(the_disp[nb_var].T, x=nb_var)
 
-st.write(f'''Entrez l'id souhaité''')
 
-st.write(f'''
+st.write('''
  ## pour un accès équitable au prêt bancaire
  Remplissez le formulaire ci-dessous pour évaluer votre de capacité de remboursement
  ''')
@@ -183,7 +203,7 @@ for i in most_imp:
 age = st.slider('Âge du demandeur', 0, 110, 29)
 actual['DAYS_BIRTH'] = age * 365 * (-1)
 nc_df = pd.Series(actual)
-st.write("Vous indiquz que le demandeur est âgé de ", age, 'ans')
+st.write("Vous indiqué que le demandeur est âgé de ", age, 'ans')
 
 
 if st.button("Évaluer"):
@@ -197,13 +217,13 @@ if st.button("Évaluer"):
     st.write(evaluation.json())
     actual_s = pd.Series(actual)
     refused_pop.loc[8] = actual
-    refused_pop.rename({1:'Mean', 3:"Min", 7:'Max', 8:'Demandeur'}, axis=0, inplace=True)
+    refused_pop.rename({1:'Mean', 3:"Min", 8:'Demandeur'}, axis=0, inplace=True)
     granted_pop.loc[8] = actual
-    granted_pop.rename({1:'Mean', 3:"Min", 7:'Max', 8:'Demandeur'}, axis=0, inplace=True)
+    granted_pop.rename({1:'Mean', 3:"Min", 8:'Demandeur'}, axis=0, inplace=True)
     st.title('Comparaison aux demandes de prêt refusées')
-    st.line_chart(refused_pop.T[['Mean', 'Min', 'Max', 'Demandeur']])
+    st.line_chart(refused_pop.T[['Mean', 'Min', 'Demandeur']])
     st.title("comparaison au demandes de prêt accordées")
-    st.line_chart(granted_pop.T[['Mean', 'Min', 'Max', 'Demandeur']])
+    st.line_chart(granted_pop.T[['Mean', 'Min', 'Demandeur']])
 
 
 
