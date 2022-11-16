@@ -4,7 +4,6 @@ import pandas as pd
 import requests
 import matplotlib.pyplot as plt
 import numpy as np
-import plost
 st. set_page_config(layout="wide")
 backend_url = "https://loan.cleverapps.io/"
 
@@ -133,7 +132,6 @@ st.markdown(f"<h1 style='color:{score_color(st.session_state['ps'][0])}'>{st.ses
 the_disp = pd.concat([granted_pop_clients.loc[granted_pop_clients['uuid'] == st.session_state['temp_cli']],
                       granted_pop_clients.loc[granted_pop_clients.index == 'mean']], axis=0)[
     nb_var]  # Ajout de la ligne moyenne au dataframe
-#Columns traduction
 
 
 grouped = the_disp[[trans[o] for o in sel_three]].T
